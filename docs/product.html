@@ -479,6 +479,7 @@
             grid-template-columns: repeat(3, 1fr);
             gap: 24px;
         }
+        @media (max-width: 1024px) { .experience-grid { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 768px) { .experience-grid { grid-template-columns: 1fr; } }
         .experience-card {
             background: var(--bg-card);
@@ -893,35 +894,62 @@
         <div class="container">
             <div class="reveal" style="text-align:center;">
                 <span class="section-tag">立即体验</span>
-                <h2 class="section-title">三种方式，<br>总有一种适合你</h2>
-                <p class="section-desc" style="margin-left:auto;margin-right:auto;">从手机快速体验到 PICO 完整沉浸，选择你的方式感受星伴AI。</p>
+                <h2 class="section-title">六种方式，<br>总有一种适合你</h2>
+                <p class="section-desc" style="margin-left:auto;margin-right:auto;">从手机快速体验到 PICO 完整沉浸，从源码研究到视频观摩，选择你的方式感受星伴AI。</p>
             </div>
             <div class="experience-grid">
                 <div class="experience-card reveal">
+                    <div class="exp-icon">🌐</div>
+                    <h3>产品介绍页</h3>
+                    <p>完整的产品介绍官网，了解设计理念、功能详解、技术架构和未来规划。</p>
+                    <span class="exp-badge hot">推荐先看</span>
+                    <div style="margin-top:20px;">
+                        <a href="https://xyangshaun.github.io/xingban-ai-/product.html" target="_blank" class="btn-primary" style="font-size:14px;padding:10px 24px;">查看介绍</a>
+                    </div>
+                </div>
+                <div class="experience-card reveal reveal-delay-1">
                     <div class="exp-icon">📱</div>
                     <h3>Web Demo</h3>
-                    <p>手机浏览器直接打开，体验伙伴创建、AI对话、心情日记和 AR 概念预览。</p>
+                    <p>手机/电脑浏览器直接打开，体验伙伴创建、AI对话、心情日记和手机 AR 概念预览。</p>
                     <span class="exp-badge hot">最快体验</span>
                     <div style="margin-top:20px;">
                         <a href="https://xyangshaun.github.io/xingban-ai-/" target="_blank" class="btn-primary" style="font-size:14px;padding:10px 24px;">立即打开</a>
                     </div>
                 </div>
-                <div class="experience-card reveal reveal-delay-1">
+                <div class="experience-card reveal reveal-delay-2">
                     <div class="exp-icon">🥽</div>
-                    <h3>PICO 模拟器</h3>
-                    <p>下载 APK 安装到 PICO 模拟器或真机，体验完整 AR 空间伙伴和 XR 沉浸场景。</p>
+                    <h3>PICO 模拟器/真机</h3>
+                    <p>下载 APK 安装到 PICO 模拟器或 PICO 头显，体验完整 AR 空间伙伴、六自由度追踪和 XR 沉浸场景。</p>
                     <span class="exp-badge full">完整功能</span>
                     <div style="margin-top:20px;">
                         <a href="https://github.com/Xyangshaun/xingban-ai-" target="_blank" class="btn-secondary" style="font-size:14px;padding:10px 24px;">获取 APK</a>
                     </div>
                 </div>
-                <div class="experience-card reveal reveal-delay-2">
+                <div class="experience-card reveal">
                     <div class="exp-icon">🎬</div>
                     <h3>演示视频</h3>
-                    <p>观看 PICO VR 设备上的完整演示视频，了解 AR 场景交互和空间对话等 VR 专属功能。</p>
+                    <p>观看 PICO VR 设备上的完整演示视频，了解 AR 场景交互、空间对话等 VR 专属功能。即将上传至 Bilibili。</p>
                     <span class="exp-badge pro">视频展示</span>
                     <div style="margin-top:20px;">
                         <a href="#" class="btn-secondary" style="font-size:14px;padding:10px 24px;">即将上线</a>
+                    </div>
+                </div>
+                <div class="experience-card reveal reveal-delay-1">
+                    <div class="exp-icon">📦</div>
+                    <h3>GitHub 源码</h3>
+                    <p>完整 Android/PICO 项目源码，包含 AI 对话引擎、AR 场景、TTS 语音合成、StarBrand 设计系统等全部代码。</p>
+                    <span class="exp-badge full">源码开放</span>
+                    <div style="margin-top:20px;">
+                        <a href="https://github.com/Xyangshaun/xingban-ai-" target="_blank" class="btn-secondary" style="font-size:14px;padding:10px 24px;">查看源码</a>
+                    </div>
+                </div>
+                <div class="experience-card reveal reveal-delay-2">
+                    <div class="exp-icon">📄</div>
+                    <h3>初赛提交帖</h3>
+                    <p>包含完整的创作思路、TRAE 实践过程、开发日志、踩坑记录和评审自评，了解三天开发全流程。</p>
+                    <span class="exp-badge pro">文档</span>
+                    <div style="margin-top:20px;">
+                        <a href="https://forum.trae.cn/c/38-category/40-category/40" target="_blank" class="btn-secondary" style="font-size:14px;padding:10px 24px;">前往社区</a>
                     </div>
                 </div>
             </div>
