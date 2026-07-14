@@ -1,0 +1,2 @@
+-keep class com.pico.spatial.** { *; }
+-dontwarn com.pico.spatial.**

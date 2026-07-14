@@ -1,0 +1,38 @@
+{
+  "currentState": "initial",
+  "stateHistory": [
+    {
+      "from": "initial",
+      "command": "action",
+      "timestamp": "2026-07-14T10:58:35.183Z",
+      "args": [
+        "_",
+        null
+      ]
+    },
+    {
+      "from": "initial",
+      "command": "discover",
+      "timestamp": "2026-07-14T10:58:42.766Z",
+      "args": []
+    },
+    {
+      "from": "initial",
+      "command": "discover",
+      "timestamp": "2026-07-14T11:13:04.459Z",
+      "args": []
+    },
+    {
+      "from": "initial",
+      "command": "project",
+      "timestamp": "2026-07-14T14:01:06.570Z",
+      "args": [
+        {
+          "workingDirectory": "C:\\Users\\26929\\Desktop\\trae创造力-社会公益-硬件服务，青少年服务\\MySpatialApp",
+          "ideType": "vscode"
+        }
+      ]
+    }
+  ],
+  "lastUpdated": "2026-07-14T14:01:06.639Z"
+}
