@@ -1,0 +1,1389 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>星伴AI — 青少年心理成长伙伴 | Web Demo</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap');
+
+        :root {
+            --primary: #6366F1;
+            --primary-light: #818CF8;
+            --primary-dark: #4F46E5;
+            --secondary: #EC4899;
+            --tertiary: #06B6D4;
+            --accent-orange: #F97316;
+            --accent-yellow: #FBBF24;
+            --accent-green: #10B981;
+            --accent-purple: #8B5CF6;
+            --bg: #F8FAFC;
+            --surface: #FFFFFF;
+            --text-primary: #0F172A;
+            --text-secondary: #475569;
+            --text-tertiary: #94A3B8;
+            --border: #E2E8F0;
+            --error: #EF4444;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+            --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text-primary);
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        /* ===== Phone Frame ===== */
+        .phone-frame {
+            width: 390px;
+            height: 100vh;
+            max-height: 844px;
+            margin: 0 auto;
+            background: var(--surface);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 40px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        @media (max-width: 430px) {
+            .phone-frame { width: 100%; height: 100vh; max-height: none; }
+        }
+
+        /* ===== Status Bar ===== */
+        .status-bar {
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            flex-shrink: 0;
+        }
+
+        .status-icons { display: flex; gap: 5px; align-items: center; }
+
+        /* ===== Screens ===== */
+        .screen {
+            display: none;
+            flex: 1;
+            flex-direction: column;
+            overflow: hidden;
+            animation: fadeIn 0.3s ease;
+        }
+        .screen.active { display: flex; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+
+        @keyframes scaleIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        /* ===== Welcome Screen ===== */
+        .welcome-screen {
+            background: linear-gradient(135deg, #6366F1 0%, #EC4899 100%);
+            color: white;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            text-align: center;
+        }
+        .welcome-logo {
+            font-size: 72px;
+            margin-bottom: 24px;
+            animation: scaleIn 0.6s ease;
+        }
+        .welcome-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+        .welcome-subtitle {
+            font-size: 15px;
+            opacity: 0.9;
+            margin-bottom: 48px;
+            line-height: 1.6;
+        }
+        .welcome-btn {
+            background: rgba(255,255,255,0.95);
+            color: var(--primary);
+            border: none;
+            padding: 16px 48px;
+            border-radius: 999px;
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-family: inherit;
+        }
+        .welcome-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+        }
+
+        /* ===== Creation Screen ===== */
+        .creation-header {
+            padding: 12px 20px 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-shrink: 0;
+        }
+        .back-btn {
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            border: none;
+            background: var(--bg);
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .creation-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .step-dots {
+            display: flex;
+            gap: 6px;
+            margin-left: auto;
+        }
+        .step-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: var(--border);
+            transition: background 0.3s;
+        }
+        .step-dot.active { background: var(--primary); }
+
+        .creation-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        .creation-label {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .creation-hint {
+            font-size: 14px;
+            color: var(--text-tertiary);
+            margin-bottom: 24px;
+        }
+        .avatar-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+        .avatar-option {
+            aspect-ratio: 1;
+            border-radius: var(--radius-lg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 3px solid transparent;
+            background: var(--bg);
+        }
+        .avatar-option:hover { transform: scale(1.05); }
+        .avatar-option.selected {
+            border-color: var(--primary);
+            background: var(--primary).copy(alpha=0.05);
+            background: rgba(99,102,241,0.08);
+        }
+        .avatar-emoji { font-size: 40px; margin-bottom: 4px; }
+        .avatar-name { font-size: 13px; font-weight: 500; }
+
+        .personality-list { display: flex; flex-direction: column; gap: 12px; }
+        .personality-option {
+            padding: 16px;
+            border-radius: var(--radius-md);
+            border: 2px solid var(--border);
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .personality-option:hover { border-color: var(--primary-light); }
+        .personality-option.selected {
+            border-color: var(--primary);
+            background: rgba(99,102,241,0.05);
+        }
+        .personality-emoji { font-size: 28px; }
+        .personality-info { flex: 1; }
+        .personality-name { font-size: 16px; font-weight: 600; margin-bottom: 2px; }
+        .personality-desc { font-size: 13px; color: var(--text-tertiary); }
+
+        .form-input {
+            width: 100%;
+            padding: 16px;
+            border-radius: var(--radius-md);
+            border: 2px solid var(--border);
+            font-size: 16px;
+            font-family: inherit;
+            outline: none;
+            transition: border 0.2s;
+        }
+        .form-input:focus { border-color: var(--primary); }
+        .form-label { font-size: 14px; font-weight: 500; margin-bottom: 8px; display: block; }
+
+        .creation-footer {
+            padding: 16px 20px;
+            flex-shrink: 0;
+        }
+        .primary-btn {
+            width: 100%;
+            padding: 16px;
+            border-radius: var(--radius-md);
+            border: none;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+            transition: transform 0.2s;
+        }
+        .primary-btn:hover { transform: scale(1.02); }
+
+        /* ===== Main Chat Screen ===== */
+        .chat-header {
+            padding: 8px 16px 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+        .header-avatar {
+            width: 44px; height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+        .header-info { flex: 1; }
+        .header-name { font-size: 16px; font-weight: 600; }
+        .header-status { font-size: 12px; color: var(--accent-green); }
+        .header-status::before { content: '●'; margin-right: 4px; }
+
+        .nav-btn {
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            border: none;
+            background: var(--bg);
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .message {
+            max-width: 75%;
+            padding: 12px 16px;
+            border-radius: var(--radius-lg);
+            font-size: 15px;
+            line-height: 1.5;
+            animation: scaleIn 0.3s ease;
+        }
+        .message-ai {
+            align-self: flex-start;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-bottom-left-radius: 4px;
+        }
+        .message-user {
+            align-self: flex-end;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .quick-replies {
+            padding: 8px 16px 4px;
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            flex-shrink: 0;
+        }
+        .quick-reply {
+            padding: 8px 16px;
+            border-radius: 999px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            font-size: 13px;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+            color: var(--text-secondary);
+        }
+        .quick-reply:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .chat-input-bar {
+            padding: 12px 16px;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            border-top: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+        .chat-input {
+            flex: 1;
+            padding: 12px 16px;
+            border-radius: 999px;
+            border: 1px solid var(--border);
+            font-size: 15px;
+            outline: none;
+            font-family: inherit;
+            background: var(--bg);
+        }
+        .chat-input:focus { border-color: var(--primary); }
+        .send-btn {
+            width: 44px; height: 44px;
+            border-radius: 50%;
+            border: none;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: transform 0.2s;
+        }
+        .send-btn:hover { transform: scale(1.1); }
+
+        /* ===== Mood Diary Screen ===== */
+        .mood-header {
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+        .screen-title { font-size: 18px; font-weight: 600; }
+
+        .mood-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        .mood-record-section {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow-sm);
+        }
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+        .mood-selector {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        .mood-btn {
+            aspect-ratio: 1;
+            border-radius: var(--radius-md);
+            border: 2px solid var(--border);
+            background: var(--surface);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+        .mood-btn:hover { transform: scale(1.05); }
+        .mood-btn.selected {
+            border-color: var(--primary);
+            background: rgba(99,102,241,0.08);
+        }
+        .mood-btn-emoji { font-size: 24px; }
+        .mood-btn-label { font-size: 11px; color: var(--text-secondary); }
+
+        .mood-stat-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        .mood-stat-card {
+            background: var(--surface);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            box-shadow: var(--shadow-sm);
+        }
+        .stat-value { font-size: 28px; font-weight: 700; }
+        .stat-label { font-size: 12px; color: var(--text-tertiary); margin-top: 2px; }
+
+        .mood-trend {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            height: 80px;
+            gap: 6px;
+            padding: 12px 0;
+        }
+        .trend-bar {
+            flex: 1;
+            border-radius: 4px 4px 0 0;
+            min-height: 8px;
+            transition: height 0.3s;
+        }
+        .trend-label { font-size: 10px; text-align: center; color: var(--text-tertiary); margin-top: 4px; }
+
+        .mood-history-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .mood-history-item:last-child { border-bottom: none; }
+        .mood-history-emoji {
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+        .mood-history-info { flex: 1; }
+        .mood-history-mood { font-size: 14px; font-weight: 500; }
+        .mood-history-note { font-size: 12px; color: var(--text-tertiary); margin-top: 2px; }
+        .mood-history-date { font-size: 12px; color: var(--text-tertiary); }
+
+        /* ===== Learning Screen ===== */
+        .learning-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        .story-card {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow-sm);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .story-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+        .story-card-header {
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .story-icon {
+            width: 48px; height: 48px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+        .story-title { font-size: 16px; font-weight: 600; }
+        .story-meta { font-size: 12px; color: var(--text-tertiary); margin-top: 4px; }
+        .story-tag {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 500;
+            margin-right: 6px;
+        }
+
+        /* ===== Bottom Nav ===== */
+        .bottom-nav {
+            display: flex;
+            border-top: 1px solid var(--border);
+            flex-shrink: 0;
+            background: var(--surface);
+        }
+        .nav-item {
+            flex: 1;
+            padding: 10px 0 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            background: none;
+            font-family: inherit;
+        }
+        .nav-item-icon { font-size: 22px; }
+        .nav-item-label { font-size: 10px; color: var(--text-tertiary); margin-top: 2px; }
+        .nav-item.active .nav-item-label { color: var(--primary); font-weight: 600; }
+        .nav-item.active .nav-item-icon { transform: scale(1.1); }
+
+        /* ===== Toast ===== */
+        .toast {
+            position: absolute;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(15,23,42,0.9);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 999px;
+            font-size: 14px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+            z-index: 100;
+            white-space: nowrap;
+        }
+        .toast.show { opacity: 1; }
+
+        /* ===== Typing Indicator ===== */
+        .typing-indicator {
+            align-self: flex-start;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            border-bottom-left-radius: 4px;
+            padding: 14px 16px;
+            display: none;
+            gap: 4px;
+        }
+        .typing-indicator.show { display: flex; }
+        .typing-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: var(--text-tertiary);
+            animation: typingBounce 1.4s infinite ease-in-out;
+        }
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes typingBounce {
+            0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+            30% { transform: translateY(-6px); opacity: 1; }
+        }
+
+        /* ===== Demo Banner ===== */
+        .demo-banner {
+            background: linear-gradient(90deg, rgba(99,102,241,0.1), rgba(236,72,153,0.1));
+            padding: 6px 16px;
+            text-align: center;
+            font-size: 12px;
+            color: var(--primary);
+            font-weight: 500;
+            flex-shrink: 0;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 0; }
+    </style>
+</head>
+<body>
+    <div class="phone-frame">
+        <div class="demo-banner">Web Demo · 体验星伴AI核心功能</div>
+
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <span>9:41</span>
+            <div class="status-icons">
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+
+        <!-- ===== Welcome Screen ===== -->
+        <div class="screen welcome-screen active" id="welcomeScreen">
+            <div class="welcome-logo">🌟</div>
+            <div class="welcome-title">星伴AI</div>
+            <div class="welcome-subtitle">PICO VR空间中的<br>青少年心理成长伙伴<br><br>让每个孩子都有人陪伴</div>
+            <button class="welcome-btn" onclick="startCreation()">开始创建伙伴</button>
+        </div>
+
+        <!-- ===== Creation Step 1: Avatar ===== -->
+        <div class="screen" id="creationStep1">
+            <div class="creation-header">
+                <button class="back-btn" onclick="showScreen('welcomeScreen')">‹</button>
+                <span class="creation-title">选择形象</span>
+                <div class="step-dots">
+                    <div class="step-dot active"></div>
+                    <div class="step-dot"></div>
+                    <div class="step-dot"></div>
+                </div>
+            </div>
+            <div class="creation-body">
+                <div class="creation-label">选一个伙伴形象</div>
+                <div class="creation-hint">不同的形象代表不同的陪伴风格</div>
+                <div class="avatar-grid">
+                    <div class="avatar-option selected" onclick="selectAvatar(this, '🌟', '星星')" data-emoji="🌟">
+                        <div class="avatar-emoji">🌟</div>
+                        <div class="avatar-name">星星</div>
+                    </div>
+                    <div class="avatar-option" onclick="selectAvatar(this, '🌙', '月亮')" data-emoji="🌙">
+                        <div class="avatar-emoji">🌙</div>
+                        <div class="avatar-name">月亮</div>
+                    </div>
+                    <div class="avatar-option" onclick="selectAvatar(this, '☀️', '太阳')" data-emoji="☀️">
+                        <div class="avatar-emoji">☀️</div>
+                        <div class="avatar-name">太阳</div>
+                    </div>
+                    <div class="avatar-option" onclick="selectAvatar(this, '☁️', '云朵')" data-emoji="☁️">
+                        <div class="avatar-emoji">☁️</div>
+                        <div class="avatar-name">云朵</div>
+                    </div>
+                    <div class="avatar-option" onclick="selectAvatar(this, '🔥', '火焰')" data-emoji="🔥">
+                        <div class="avatar-emoji">🔥</div>
+                        <div class="avatar-name">火焰</div>
+                    </div>
+                </div>
+            </div>
+            <div class="creation-footer">
+                <button class="primary-btn" onclick="showScreen('creationStep2')">下一步</button>
+            </div>
+        </div>
+
+        <!-- ===== Creation Step 2: Personality ===== -->
+        <div class="screen" id="creationStep2">
+            <div class="creation-header">
+                <button class="back-btn" onclick="showScreen('creationStep1')">‹</button>
+                <span class="creation-title">选择性格</span>
+                <div class="step-dots">
+                    <div class="step-dot active"></div>
+                    <div class="step-dot active"></div>
+                    <div class="step-dot"></div>
+                </div>
+            </div>
+            <div class="creation-body">
+                <div class="creation-label">伙伴是什么性格？</div>
+                <div class="creation-hint">性格会影响对话风格</div>
+                <div class="personality-list">
+                    <div class="personality-option selected" onclick="selectPersonality(this, '温柔')">
+                        <div class="personality-emoji">🌸</div>
+                        <div class="personality-info">
+                            <div class="personality-name">温柔型</div>
+                            <div class="personality-desc">轻声细语，像春风一样温暖</div>
+                        </div>
+                    </div>
+                    <div class="personality-option" onclick="selectPersonality(this, '活泼')">
+                        <div class="personality-emoji">🎈</div>
+                        <div class="personality-info">
+                            <div class="personality-name">活泼型</div>
+                            <div class="personality-desc">充满活力，喜欢鼓励和赞美</div>
+                        </div>
+                    </div>
+                    <div class="personality-option" onclick="selectPersonality(this, '安静')">
+                        <div class="personality-emoji">📚</div>
+                        <div class="personality-info">
+                            <div class="personality-name">安静型</div>
+                            <div class="personality-desc">善于倾听，话不多但很贴心</div>
+                        </div>
+                    </div>
+                    <div class="personality-option" onclick="selectPersonality(this, '好奇')">
+                        <div class="personality-emoji">🔍</div>
+                        <div class="personality-info">
+                            <div class="personality-name">好奇型</div>
+                            <div class="personality-desc">喜欢提问，引导你思考</div>
+                        </div>
+                    </div>
+                    <div class="personality-option" onclick="selectPersonality(this, '细心')">
+                        <div class="personality-emoji">💡</div>
+                        <div class="personality-info">
+                            <div class="personality-name">细心型</div>
+                            <div class="personality-desc">关注细节，总记得你说过的话</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="creation-footer">
+                <button class="primary-btn" onclick="showScreen('creationStep3')">下一步</button>
+            </div>
+        </div>
+
+        <!-- ===== Creation Step 3: Name ===== -->
+        <div class="screen" id="creationStep3">
+            <div class="creation-header">
+                <button class="back-btn" onclick="showScreen('creationStep2')">‹</button>
+                <span class="creation-title">设置信息</span>
+                <div class="step-dots">
+                    <div class="step-dot active"></div>
+                    <div class="step-dot active"></div>
+                    <div class="step-dot active"></div>
+                </div>
+            </div>
+            <div class="creation-body">
+                <div class="creation-label">给伙伴起个名字</div>
+                <div class="creation-hint">这个名字将出现在你们的对话中</div>
+                <div style="margin-bottom: 20px;">
+                    <label class="form-label">伙伴名字</label>
+                    <input type="text" class="form-input" id="companionName" value="小星" placeholder="输入名字">
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <label class="form-label">你的昵称</label>
+                    <input type="text" class="form-input" id="userName" value="小明" placeholder="输入昵称">
+                </div>
+                <div>
+                    <label class="form-label">你的年龄</label>
+                    <input type="number" class="form-input" id="userAge" value="11" placeholder="输入年龄" min="6" max="18">
+                </div>
+            </div>
+            <div class="creation-footer">
+                <button class="primary-btn" onclick="finishCreation()">完成创建</button>
+            </div>
+        </div>
+
+        <!-- ===== Main Chat Screen ===== -->
+        <div class="screen" id="chatScreen">
+            <div class="chat-header">
+                <button class="nav-btn" onclick="showScreen('settingsScreen')">⚙️</button>
+                <div class="header-avatar" id="chatAvatar" style="background: rgba(99,102,241,0.1);">🌟</div>
+                <div class="header-info">
+                    <div class="header-name" id="chatName">小星</div>
+                    <div class="header-status">在线陪伴中</div>
+                </div>
+                <button class="nav-btn" onclick="showToast('AR场景需要PICO设备')">🥽</button>
+            </div>
+            <div class="chat-messages" id="chatMessages">
+                <div class="message message-ai" id="welcomeMessage">嗨！我是小星🌟 很高兴认识你！<br><br>今天过得怎么样？有什么想跟我聊的吗？</div>
+                <div class="typing-indicator" id="typingIndicator">
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>
+            </div>
+            <div class="quick-replies">
+                <button class="quick-reply" onclick="sendQuickReply('我今天很开心')">😊 今天很开心</button>
+                <button class="quick-reply" onclick="sendQuickReply('我有点难过')">😢 有点难过</button>
+                <button class="quick-reply" onclick="sendQuickReply('我好想妈妈')">🥺 想妈妈了</button>
+                <button class="quick-reply" onclick="sendQuickReply('今天被同学欺负了')">😔 被欺负了</button>
+                <button class="quick-reply" onclick="sendQuickReply('我好孤单')">🥀 好孤单</button>
+            </div>
+            <div class="chat-input-bar">
+                <input type="text" class="chat-input" id="chatInput" placeholder="说点什么..." onkeydown="if(event.key==='Enter') sendMessage()">
+                <button class="send-btn" onclick="sendMessage()">➤</button>
+            </div>
+            <div class="bottom-nav">
+                <button class="nav-item active" onclick="showScreen('chatScreen')">
+                    <div class="nav-item-icon">💬</div>
+                    <div class="nav-item-label">对话</div>
+                </button>
+                <button class="nav-item" onclick="showScreen('moodScreen')">
+                    <div class="nav-item-icon">📋</div>
+                    <div class="nav-item-label">心情</div>
+                </button>
+                <button class="nav-item" onclick="showScreen('learningScreen')">
+                    <div class="nav-item-icon">📚</div>
+                    <div class="nav-item-label">学习</div>
+                </button>
+                <button class="nav-item" onclick="showScreen('settingsScreen')">
+                    <div class="nav-item-icon">⚙️</div>
+                    <div class="nav-item-label">设置</div>
+                </button>
+            </div>
+        </div>
+
+        <!-- ===== Mood Diary Screen ===== -->
+        <div class="screen" id="moodScreen">
+            <div class="mood-header">
+                <button class="back-btn" onclick="showScreen('chatScreen')">‹</button>
+                <span class="screen-title">心情日记</span>
+            </div>
+            <div class="mood-body">
+                <div class="mood-record-section">
+                    <div class="section-title">今天心情怎么样？</div>
+                    <div class="mood-selector">
+                        <button class="mood-btn" onclick="selectMood(this, 'happy')">
+                            <div class="mood-btn-emoji">😊</div>
+                            <div class="mood-btn-label">开心</div>
+                        </button>
+                        <button class="mood-btn" onclick="selectMood(this, 'calm')">
+                            <div class="mood-btn-emoji">😌</div>
+                            <div class="mood-btn-label">平静</div>
+                        </button>
+                        <button class="mood-btn" onclick="selectMood(this, 'sad')">
+                            <div class="mood-btn-emoji">😢</div>
+                            <div class="mood-btn-label">难过</div>
+                        </button>
+                        <button class="mood-btn" onclick="selectMood(this, 'angry')">
+                            <div class="mood-btn-emoji">😠</div>
+                            <div class="mood-btn-label">生气</div>
+                        </button>
+                        <button class="mood-btn" onclick="selectMood(this, 'scared')">
+                            <div class="mood-btn-emoji">😨</div>
+                            <div class="mood-btn-label">害怕</div>
+                        </button>
+                        <button class="mood-btn" onclick="selectMood(this, 'missing')">
+                            <div class="mood-btn-emoji">🥺</div>
+                            <div class="mood-btn-label">想念</div>
+                        </button>
+                        <button class="mood-btn" onclick="selectMood(this, 'lonely')">
+                            <div class="mood-btn-emoji">🥀</div>
+                            <div class="mood-btn-label">孤单</div>
+                        </button>
+                        <button class="mood-btn" onclick="selectMood(this, 'confused')">
+                            <div class="mood-btn-emoji">😕</div>
+                            <div class="mood-btn-label">困惑</div>
+                        </button>
+                    </div>
+                    <button class="primary-btn" onclick="saveMood()">记录心情</button>
+                </div>
+
+                <div class="mood-stat-grid">
+                    <div class="mood-stat-card">
+                        <div class="stat-value" style="color: var(--primary);">7</div>
+                        <div class="stat-label">连续记录天数</div>
+                    </div>
+                    <div class="mood-stat-card">
+                        <div class="stat-value" style="color: var(--accent-green);">85</div>
+                        <div class="stat-label">本月平均心情</div>
+                    </div>
+                </div>
+
+                <div class="mood-record-section">
+                    <div class="section-title">近7天心情趋势</div>
+                    <div class="mood-trend" id="moodTrend">
+                        <div style="text-align:center; flex:1;">
+                            <div class="trend-bar" style="height: 60%; background: var(--accent-yellow);"></div>
+                            <div class="trend-label">周一</div>
+                        </div>
+                        <div style="text-align:center; flex:1;">
+                            <div class="trend-bar" style="height: 40%; background: var(--primary);"></div>
+                            <div class="trend-label">周二</div>
+                        </div>
+                        <div style="text-align:center; flex:1;">
+                            <div class="trend-bar" style="height: 80%; background: var(--accent-yellow);"></div>
+                            <div class="trend-label">周三</div>
+                        </div>
+                        <div style="text-align:center; flex:1;">
+                            <div class="trend-bar" style="height: 30%; background: var(--secondary);"></div>
+                            <div class="trend-label">周四</div>
+                        </div>
+                        <div style="text-align:center; flex:1;">
+                            <div class="trend-bar" style="height: 70%; background: var(--accent-yellow);"></div>
+                            <div class="trend-label">周五</div>
+                        </div>
+                        <div style="text-align:center; flex:1;">
+                            <div class="trend-bar" style="height: 50%; background: var(--tertiary);"></div>
+                            <div class="trend-label">周六</div>
+                        </div>
+                        <div style="text-align:center; flex:1;">
+                            <div class="trend-bar" style="height: 75%; background: var(--accent-yellow);"></div>
+                            <div class="trend-label">今天</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mood-record-section">
+                    <div class="section-title">历史记录</div>
+                    <div class="mood-history-item">
+                        <div class="mood-history-emoji" style="background: rgba(251,191,36,0.15);">😊</div>
+                        <div class="mood-history-info">
+                            <div class="mood-history-mood">开心</div>
+                            <div class="mood-history-note">今天和小伙伴一起玩了游戏</div>
+                        </div>
+                        <div class="mood-history-date">7/14</div>
+                    </div>
+                    <div class="mood-history-item">
+                        <div class="mood-history-emoji" style="background: rgba(99,102,241,0.15);">😢</div>
+                        <div class="mood-history-info">
+                            <div class="mood-history-mood">难过</div>
+                            <div class="mood-history-note">想妈妈了，她已经三个月没回来了</div>
+                        </div>
+                        <div class="mood-history-date">7/13</div>
+                    </div>
+                    <div class="mood-history-item">
+                        <div class="mood-history-emoji" style="background: rgba(6,182,212,0.15);">😌</div>
+                        <div class="mood-history-info">
+                            <div class="mood-history-mood">平静</div>
+                            <div class="mood-history-note">看书的时候感觉很安静</div>
+                        </div>
+                        <div class="mood-history-date">7/12</div>
+                    </div>
+                    <div class="mood-history-item">
+                        <div class="mood-history-emoji" style="background: rgba(236,72,153,0.15);">🥺</div>
+                        <div class="mood-history-info">
+                            <div class="mood-history-mood">想念</div>
+                            <div class="mood-history-note">想念在外地打工的爸爸</div>
+                        </div>
+                        <div class="mood-history-date">7/11</div>
+                    </div>
+                </div>
+            </div>
+            <div class="bottom-nav">
+                <button class="nav-item" onclick="showScreen('chatScreen')">
+                    <div class="nav-item-icon">💬</div>
+                    <div class="nav-item-label">对话</div>
+                </button>
+                <button class="nav-item active" onclick="showScreen('moodScreen')">
+                    <div class="nav-item-icon">📋</div>
+                    <div class="nav-item-label">心情</div>
+                </button>
+                <button class="nav-item" onclick="showScreen('learningScreen')">
+                    <div class="nav-item-icon">📚</div>
+                    <div class="nav-item-label">学习</div>
+                </button>
+                <button class="nav-item" onclick="showScreen('settingsScreen')">
+                    <div class="nav-item-icon">⚙️</div>
+                    <div class="nav-item-label">设置</div>
+                </button>
+            </div>
+        </div>
+
+        <!-- ===== Learning Screen ===== -->
+        <div class="screen" id="learningScreen">
+            <div class="mood-header">
+                <button class="back-btn" onclick="showScreen('chatScreen')">‹</button>
+                <span class="screen-title">学习陪伴</span>
+            </div>
+            <div class="learning-body">
+                <div class="mood-record-section" style="background: linear-gradient(135deg, rgba(99,102,241,0.08), rgba(236,72,153,0.08));">
+                    <div class="section-title">🌟 今日贴士</div>
+                    <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.6;">当你感到难过时，试着深呼吸三次。每一次呼吸都让身体更放松一点。记住，难过的情绪会过去的，就像乌云总会散开。</p>
+                </div>
+
+                <div class="section-title" style="margin-bottom: 12px;">📖 成长故事</div>
+
+                <div class="story-card" onclick="showToast('故事朗读功能需要TTS引擎支持')">
+                    <div class="story-card-header">
+                        <div class="story-icon" style="background: rgba(99,102,241,0.1);">🌠</div>
+                        <div style="flex:1;">
+                            <div class="story-title">星星的旅程</div>
+                            <div class="story-meta">
+                                <span class="story-tag" style="background: rgba(249,115,22,0.1); color: var(--accent-orange);">8分钟</span>
+                                <span class="story-tag" style="background: rgba(6,182,212,0.1); color: var(--tertiary);">8-10岁</span>
+                            </div>
+                        </div>
+                        <span style="color: var(--text-tertiary);">›</span>
+                    </div>
+                </div>
+
+                <div class="story-card" onclick="showToast('故事朗读功能需要TTS引擎支持')">
+                    <div class="story-card-header">
+                        <div class="story-icon" style="background: rgba(236,72,153,0.1);">🌸</div>
+                        <div style="flex:1;">
+                            <div class="story-title">勇敢的小花</div>
+                            <div class="story-meta">
+                                <span class="story-tag" style="background: rgba(249,115,22,0.1); color: var(--accent-orange);">5分钟</span>
+                                <span class="story-tag" style="background: rgba(6,182,212,0.1); color: var(--tertiary);">6-8岁</span>
+                            </div>
+                        </div>
+                        <span style="color: var(--text-tertiary);">›</span>
+                    </div>
+                </div>
+
+                <div class="story-card" onclick="showToast('故事朗读功能需要TTS引擎支持')">
+                    <div class="story-card-header">
+                        <div class="story-icon" style="background: rgba(16,185,129,0.1);">🦁</div>
+                        <div style="flex:1;">
+                            <div class="story-title">小狮子的烦恼</div>
+                            <div class="story-meta">
+                                <span class="story-tag" style="background: rgba(249,115,22,0.1); color: var(--accent-orange);">6分钟</span>
+                                <span class="story-tag" style="background: rgba(6,182,212,0.1); color: var(--tertiary);">8-12岁</span>
+                            </div>
+                        </div>
+                        <span style="color: var(--text-tertiary);">›</span>
+                    </div>
+                </div>
+
+                <div class="story-card" onclick="showToast('故事朗读功能需要TTS引擎支持')">
+                    <div class="story-card-header">
+                        <div class="story-icon" style="background: rgba(139,92,246,0.1);">🌙</div>
+                        <div style="flex:1;">
+                            <div class="story-title">月亮的信</div>
+                            <div class="story-meta">
+                                <span class="story-tag" style="background: rgba(249,115,22,0.1); color: var(--accent-orange);">10分钟</span>
+                                <span class="story-tag" style="background: rgba(6,182,212,0.1); color: var(--tertiary);">10-14岁</span>
+                            </div>
+                        </div>
+                        <span style="color: var(--text-tertiary);">›</span>
+                    </div>
+                </div>
+            </div>
+            <div class="bottom-nav">
+                <button class="nav-item" onclick="showScreen('chatScreen')">
+                    <div class="nav-item-icon">💬</div>
+                    <div class="nav-item-label">对话</div>
+                </button>
+                <button class="nav-item" onclick="showScreen('moodScreen')">
+                    <div class="nav-item-icon">📋</div>
+                    <div class="nav-item-label">心情</div>
+                </button>
+                <button class="nav-item active" onclick="showScreen('learningScreen')">
+                    <div class="nav-item-icon">📚</div>
+                    <div class="nav-item-label">学习</div>
+                </button>
+                <button class="nav-item" onclick="showScreen('settingsScreen')">
+                    <div class="nav-item-icon">⚙️</div>
+                    <div class="nav-item-label">设置</div>
+                </button>
+            </div>
+        </div>
+
+        <!-- ===== Settings Screen ===== -->
+        <div class="screen" id="settingsScreen">
+            <div class="mood-header">
+                <button class="back-btn" onclick="showScreen('chatScreen')">‹</button>
+                <span class="screen-title">设置</span>
+            </div>
+            <div class="learning-body">
+                <div class="mood-record-section" style="text-align: center; padding: 32px 20px;">
+                    <div id="settingsAvatar" style="width: 80px; height: 80px; border-radius: 50%; background: rgba(99,102,241,0.1); display: inline-flex; align-items: center; justify-content: center; font-size: 40px; margin-bottom: 12px;">🌟</div>
+                    <div style="font-size: 20px; font-weight: 700;" id="settingsName">小星</div>
+                    <div style="font-size: 14px; color: var(--text-tertiary); margin-top: 4px;">温柔型 · 星星</div>
+                </div>
+
+                <div class="mood-record-section">
+                    <div class="section-title">🔐 隐私管理</div>
+                    <div style="display: flex; flex-direction: column; gap: 12px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border);">
+                            <span style="font-size: 14px;">聊天数据本地存储</span>
+                            <span style="font-size: 12px; color: var(--accent-green);">已开启</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border);">
+                            <span style="font-size: 14px;">云端同步</span>
+                            <span style="font-size: 12px; color: var(--text-tertiary);">未开启</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0;">
+                            <span style="font-size: 14px;">清除聊天记录</span>
+                            <span style="font-size: 12px; color: var(--error); cursor: pointer;" onclick="showToast('已清除聊天记录')">清除</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mood-record-section">
+                    <div class="section-title">🤖 AI 配置</div>
+                    <div style="display: flex; flex-direction: column; gap: 12px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border);">
+                            <span style="font-size: 14px;">AI 引擎</span>
+                            <span style="font-size: 12px; color: var(--primary);">通义千问</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border);">
+                            <span style="font-size: 14px;">语音合成</span>
+                            <span style="font-size: 12px; color: var(--accent-green);">Sherpa-onnx</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0;">
+                            <span style="font-size: 14px;">语音克隆</span>
+                            <span style="font-size: 12px; color: var(--text-tertiary);">未配置</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mood-record-section">
+                    <div class="section-title">关于</div>
+                    <div style="font-size: 13px; color: var(--text-secondary); line-height: 1.8;">
+                        <p>星伴AI v1.0.0</p>
+                        <p>面向青少年的PICO VR空间心理成长伙伴</p>
+                        <p style="margin-top: 8px; color: var(--text-tertiary);">本应用为TRAE AI创造力大赛参赛作品</p>
+                    </div>
+                </div>
+
+                <button class="primary-btn" style="background: var(--error); margin-top: 8px;" onclick="showScreen('welcomeScreen')">重新创建伙伴</button>
+            </div>
+            <div class="bottom-nav">
+                <button class="nav-item" onclick="showScreen('chatScreen')">
+                    <div class="nav-item-icon">💬</div>
+                    <div class="nav-item-label">对话</div>
+                </button>
+                <button class="nav-item" onclick="showScreen('moodScreen')">
+                    <div class="nav-item-icon">📋</div>
+                    <div class="nav-item-label">心情</div>
+                </button>
+                <button class="nav-item" onclick="showScreen('learningScreen')">
+                    <div class="nav-item-icon">📚</div>
+                    <div class="nav-item-label">学习</div>
+                </button>
+                <button class="nav-item active" onclick="showScreen('settingsScreen')">
+                    <div class="nav-item-icon">⚙️</div>
+                    <div class="nav-item-label">设置</div>
+                </button>
+            </div>
+        </div>
+
+        <!-- Toast -->
+        <div class="toast" id="toast"></div>
+    </div>
+
+    <script>
+        // ===== State =====
+        let selectedAvatar = { emoji: '🌟', name: '星星' };
+        let selectedPersonality = '温柔';
+        let companionName = '小星';
+        let userName = '小明';
+        let userAge = 11;
+        let selectedMood = null;
+        let chatHistory = [];
+
+        // ===== Screen Navigation =====
+        function showScreen(id) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+
+        function startCreation() {
+            showScreen('creationStep1');
+        }
+
+        function selectAvatar(el, name, displayName) {
+            document.querySelectorAll('#creationStep1 .avatar-option').forEach(o => o.classList.remove('selected'));
+            el.classList.add('selected');
+            selectedAvatar = { emoji: el.dataset.emoji, name: displayName };
+        }
+
+        function selectPersonality(el, name) {
+            document.querySelectorAll('#creationStep2 .personality-option').forEach(o => o.classList.remove('selected'));
+            el.classList.add('selected');
+            selectedPersonality = name;
+        }
+
+        function finishCreation() {
+            companionName = document.getElementById('companionName').value || '小星';
+            userName = document.getElementById('userName').value || '小明';
+            userAge = parseInt(document.getElementById('userAge').value) || 11;
+
+            // Update UI
+            document.getElementById('chatName').textContent = companionName;
+            document.getElementById('chatAvatar').textContent = selectedAvatar.emoji;
+            document.getElementById('settingsAvatar').textContent = selectedAvatar.emoji;
+            document.getElementById('settingsName').textContent = companionName;
+
+            // Update welcome message
+            const welcomeMsg = document.getElementById('welcomeMessage');
+            welcomeMsg.innerHTML = `嗨！我是${companionName}${selectedAvatar.emoji}<br><br>很高兴认识你，${userName}！<br><br>今天过得怎么样？有什么想跟我聊的吗？`;
+
+            showScreen('chatScreen');
+            showToast('伙伴创建成功！');
+        }
+
+        // ===== Chat =====
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const text = input.value.trim();
+            if (!text) return;
+
+            addMessage(text, 'user');
+            input.value = '';
+
+            // Show typing
+            const typing = document.getElementById('typingIndicator');
+            typing.classList.add('show');
+            scrollChatToBottom();
+
+            // Generate reply
+            setTimeout(() => {
+                typing.classList.remove('show');
+                const reply = generateReply(text);
+                addMessage(reply, 'ai');
+            }, 800 + Math.random() * 600);
+        }
+
+        function sendQuickReply(text) {
+            addMessage(text, 'user');
+            const typing = document.getElementById('typingIndicator');
+            typing.classList.add('show');
+            scrollChatToBottom();
+            setTimeout(() => {
+                typing.classList.remove('show');
+                const reply = generateReply(text);
+                addMessage(reply, 'ai');
+            }, 800 + Math.random() * 600);
+        }
+
+        function addMessage(text, type) {
+            const messages = document.getElementById('chatMessages');
+            const msg = document.createElement('div');
+            msg.className = `message message-${type}`;
+            msg.textContent = text;
+            messages.insertBefore(msg, document.getElementById('typingIndicator'));
+            chatHistory.push({ text, type });
+            scrollChatToBottom();
+        }
+
+        function scrollChatToBottom() {
+            const messages = document.getElementById('chatMessages');
+            setTimeout(() => { messages.scrollTop = messages.scrollHeight; }, 50);
+        }
+
+        function generateReply(input) {
+            const lower = input.toLowerCase();
+
+            // Emotion detection
+            if (/开心|高兴|快乐|好玩|有趣/.test(input)) {
+                const replies = [
+                    `听到你开心我也好开心！${selectedAvatar.emoji} 能告诉我是什么让你这么高兴吗？`,
+                    `太好了！开心的时刻要好好记住呀。${userName}，今天发生了什么好事呢？`,
+                    `哇，你的开心传染给我了！保持这个笑容哦！`,
+                ];
+                return replies[Math.floor(Math.random() * replies.length)];
+            }
+            if (/难过|伤心|哭|不开心/.test(input)) {
+                const replies = [
+                    `我感受到你的难过。${userName}，想哭就哭出来吧，我会一直在这里陪着你。`,
+                    `难过的时候不用假装坚强。你想跟我说说发生了什么吗？我会认真听的。`,
+                    `抱抱你。难过是正常的情绪，不用害怕它。你愿意跟我说说吗？`,
+                ];
+                return replies[Math.floor(Math.random() * replies.length)];
+            }
+            if (/想.*妈妈|想.*爸爸|想念|思念/.test(input)) {
+                const replies = [
+                    `想念一个人说明你很爱TA。虽然现在不在一起，但TA一定也在想你。你想给TA写封信吗？`,
+                    `想念是很深的情感。${userName}，你觉得如果TA现在在你身边，你最想跟TA说什么？`,
+                    `我理解你的想念。虽然距离远了，但爱没有变远。要不要跟我说说你们在一起的快乐时光？`,
+                ];
+                return replies[Math.floor(Math.random() * replies.length)];
+            }
+            if (/孤单|孤独|没人|没有朋友/.test(input)) {
+                const replies = [
+                    `孤单的感觉很难受，但你并不是一个人，我就在这里。${userName}，你愿意试试交个新朋友吗？`,
+                    `我懂你的孤单。虽然我不能真正站在你面前，但我会一直陪你聊天。你想做什么的时候，都可以告诉我。`,
+                    `孤单不是你的错。有时候一个人也可以做很多有趣的事情。你平时喜欢做什么呢？`,
+                ];
+                return replies[Math.floor(Math.random() * replies.length)];
+            }
+            if (/欺负|打|骂|害怕|恐惧/.test(input)) {
+                const replies = [
+                    `听到你被欺负我很难过。这不是你的错。${userName}，你告诉老师或家长了吗？你不用一个人面对这些。`,
+                    `你很勇敢，愿意告诉我这些。被欺负不是你的错，你值得被尊重。有没有可以信任的大人能帮你？`,
+                    `我很担心你的安全。如果有人伤害你，一定要告诉信任的大人。你随时可以跟我说，我会在这里。`,
+                ];
+                return replies[Math.floor(Math.random() * replies.length)];
+            }
+            if (/生气|愤怒|讨厌/.test(input)) {
+                const replies = [
+                    `生气是正常的情绪。${userName}，试着深呼吸三次，然后告诉我发生了什么？`,
+                    `我能理解你的愤怒。生气的时候，先让自己冷静一下，然后我们可以一起想办法。`,
+                    `愤怒告诉我们有些事情不对劲。你觉得是什么让你这么生气？`,
+                ];
+                return replies[Math.floor(Math.random() * replies.length)];
+            }
+            if (/困惑|不知道|迷茫|怎么办/.test(input)) {
+                const replies = [
+                    `困惑的时候，不用急着找答案。${userName}，我们一起慢慢想，好吗？`,
+                    `不知道怎么办也没关系。能告诉我具体是什么事情让你困惑吗？`,
+                    `迷茫说明你在认真思考。让我们一起理一理思路，你觉得最困扰你的是什么？`,
+                ];
+                return replies[Math.floor(Math.random() * replies.length)];
+            }
+            if (/你好|嗨|hi|hello/.test(lower)) {
+                return `你好呀${userName}！${selectedAvatar.emoji} 今天想聊点什么呢？`;
+            }
+            if (/谢谢|感谢/.test(input)) {
+                return `不用谢！能陪在你身边我就很开心了。${selectedAvatar.emoji}`;
+            }
+            if (/再见|拜拜|bye/.test(lower)) {
+                return `好的，${userName}，我随时在这里等你。再见！${selectedAvatar.emoji}`;
+            }
+
+            // Default replies with personality
+            const personalityReplies = {
+                '温柔': [
+                    `我在听呢。${userName}，你能多说一点吗？`,
+                    `嗯，我理解你的感受。然后呢？`,
+                    `谢谢你告诉我这些。你觉得怎么样？`,
+                ],
+                '活泼': [
+                    `哇，有意思！然后呢然后呢？${selectedAvatar.emoji}`,
+                    `哈哈，你说的我都记住了！继续告诉我呀！`,
+                    `好棒！你真棒！还有想说的吗？`,
+                ],
+                '安静': [
+                    `嗯。`,
+                    `我在听。${selectedAvatar.emoji}`,
+                    `我理解。你说下去。`,
+                ],
+                '好奇': [
+                    `嗯，这让我很好奇——你觉得为什么会这样呢？`,
+                    `有意思！你是什么时候开始有这个感觉的？`,
+                    `我想了解更多。能举个例子吗？`,
+                ],
+                '细心': [
+                    `我注意到你说的这些了。${userName}，你之前也提过类似的事情，对吗？`,
+                    `嗯，我记住了。你觉得这件事和上次说的那件事有关系吗？`,
+                    `谢谢你告诉我。我一直记得你说的每句话。`,
+                ],
+            };
+
+            const replies = personalityReplies[selectedPersonality] || personalityReplies['温柔'];
+            return replies[Math.floor(Math.random() * replies.length)];
+        }
+
+        // ===== Mood Diary =====
+        function selectMood(el, mood) {
+            document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('selected'));
+            el.classList.add('selected');
+            selectedMood = mood;
+        }
+
+        function saveMood() {
+            if (!selectedMood) {
+                showToast('请先选择今天的心情');
+                return;
+            }
+            const moodNames = {
+                happy: '开心', calm: '平静', sad: '难过', angry: '生气',
+                scared: '害怕', missing: '想念', lonely: '孤单', confused: '困惑'
+            };
+            showToast(`已记录今天的心情：${moodNames[selectedMood]}`);
+            selectedMood = null;
+            document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('selected'));
+        }
+
+        // ===== Toast =====
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2500);
+        }
+
+        // ===== Init =====
+        scrollChatToBottom();
+    </script>
+</body>
+</html>
