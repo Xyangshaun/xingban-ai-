@@ -101,6 +101,196 @@
             to { transform: scale(1); opacity: 1; }
         }
 
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(99,102,241,0.4), 0 0 40px rgba(99,102,241,0.2); }
+            50% { box-shadow: 0 0 40px rgba(99,102,241,0.6), 0 0 80px rgba(99,102,241,0.3); }
+        }
+        @keyframes particleFade {
+            0% { transform: translateY(0) scale(1); opacity: 1; }
+            100% { transform: translateY(-100px) scale(0); opacity: 0; }
+        }
+
+        /* ===== AR Scene ===== */
+        .ar-scene {
+            position: relative;
+            width: 100%;
+            flex: 1;
+            overflow: hidden;
+            background: #000;
+        }
+        .ar-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .ar-overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            pointer-events: none;
+        }
+        .ar-companion {
+            position: absolute;
+            left: 50%;
+            top: 45%;
+            transform: translate(-50%, -50%);
+            font-size: 120px;
+            filter: drop-shadow(0 0 30px rgba(99,102,241,0.6));
+            animation: float 3s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 10;
+        }
+        .ar-companion-glow {
+            position: absolute;
+            left: 50%;
+            top: 45%;
+            transform: translate(-50%, -50%);
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(99,102,241,0.4) 0%, transparent 70%);
+            animation: glow 2s ease-in-out infinite;
+            pointer-events: none;
+        }
+        .ar-scan-lines {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(99,102,241,0.03) 2px,
+                rgba(99,102,241,0.03) 4px
+            );
+            pointer-events: none;
+        }
+        .ar-particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        .ar-particle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: rgba(99,102,241,0.6);
+            animation: particleFade 3s ease-in infinite;
+        }
+
+        .ar-top-bar {
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            padding: 50px 20px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(180deg, rgba(0,0,0,0.5) 0%, transparent 100%);
+            pointer-events: auto;
+            z-index: 20;
+        }
+        .ar-back-btn {
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .ar-status {
+            background: rgba(16,185,129,0.8);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .ar-bottom-bar {
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            padding: 20px;
+            background: linear-gradient(0deg, rgba(0,0,0,0.6) 0%, transparent 100%);
+            pointer-events: auto;
+            z-index: 20;
+        }
+        .ar-chat-bubble {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 14px 18px;
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 16px;
+            max-width: 80%;
+            animation: scaleIn 0.3s ease;
+            color: var(--text-primary);
+        }
+        .ar-action-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+        .ar-action-btn {
+            width: 52px; height: 52px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            font-size: 22px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        .ar-action-btn:hover { transform: scale(1.1); background: rgba(255,255,255,0.3); }
+        .ar-action-btn.primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border: none;
+            width: 60px; height: 60px;
+            font-size: 26px;
+        }
+
+        .ar-placeholder {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        .ar-placeholder-icon { font-size: 80px; margin-bottom: 20px; animation: float 3s ease-in-out infinite; }
+        .ar-placeholder-title { font-size: 22px; font-weight: 600; margin-bottom: 12px; }
+        .ar-placeholder-text { font-size: 14px; opacity: 0.8; line-height: 1.6; margin-bottom: 24px; }
+        .ar-camera-btn {
+            padding: 14px 32px;
+            border-radius: 999px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+        }
+        .ar-camera-btn:hover { transform: scale(1.05); }
+
         /* ===== Welcome Screen ===== */
         .welcome-screen {
             background: linear-gradient(135deg, #6366F1 0%, #EC4899 100%);
@@ -788,7 +978,7 @@
                     <div class="header-name" id="chatName">小星</div>
                     <div class="header-status">在线陪伴中</div>
                 </div>
-                <button class="nav-btn" onclick="showToast('AR场景需要PICO设备')">🥽</button>
+                <button class="nav-btn" onclick="openARScene()">🥽</button>
             </div>
             <div class="chat-messages" id="chatMessages">
                 <div class="message message-ai" id="welcomeMessage">嗨！我是小星🌟 很高兴认识你！<br><br>今天过得怎么样？有什么想跟我聊的吗？</div>
@@ -1063,6 +1253,46 @@
                     <div class="nav-item-icon">⚙️</div>
                     <div class="nav-item-label">设置</div>
                 </button>
+            </div>
+        </div>
+
+        <!-- ===== AR Scene Screen ===== -->
+        <div class="screen" id="arScreen">
+            <div class="ar-scene">
+                <video class="ar-video" id="arVideo" autoplay playsinline muted></video>
+
+                <div class="ar-placeholder" id="arPlaceholder">
+                    <div class="ar-placeholder-icon" id="arPlaceholderIcon">🌟</div>
+                    <div class="ar-placeholder-title">AR 空间伙伴</div>
+                    <div class="ar-placeholder-text">
+                        开启摄像头，让虚拟伙伴<br>出现在你的真实空间中
+                    </div>
+                    <button class="ar-camera-btn" onclick="startARCamera()">开启 AR 体验</button>
+                </div>
+
+                <div class="ar-overlay" id="arOverlay" style="display: none;">
+                    <div class="ar-top-bar">
+                        <button class="ar-back-btn" onclick="closeARScene()">‹</button>
+                        <span class="ar-status">● AR 空间已连接</span>
+                    </div>
+
+                    <div class="ar-companion-glow"></div>
+                    <div class="ar-companion" id="arCompanion">🌟</div>
+                    <div class="ar-scan-lines"></div>
+                    <div class="ar-particles" id="arParticles"></div>
+
+                    <div class="ar-bottom-bar">
+                        <div class="ar-chat-bubble" id="arChatBubble">
+                            嗨！我在这儿呢～<br>你今天过得怎么样？
+                        </div>
+                        <div class="ar-action-buttons">
+                            <button class="ar-action-btn" onclick="arAction('wave')">👋</button>
+                            <button class="ar-action-btn primary" onclick="arAction('chat')">💬</button>
+                            <button class="ar-action-btn" onclick="arAction('mood')">😊</button>
+                            <button class="ar-action-btn" onclick="arAction('rotate')">🔄</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -1380,6 +1610,131 @@
             toast.textContent = msg;
             toast.classList.add('show');
             setTimeout(() => toast.classList.remove('show'), 2500);
+        }
+
+        // ===== AR Scene =====
+        let arStream = null;
+        let arRotation = 0;
+        let arCompanionOffset = { x: 0, y: 0 };
+
+        function openARScene() {
+            document.getElementById('arPlaceholderIcon').textContent = selectedAvatar.emoji;
+            showScreen('arScreen');
+        }
+
+        function closeARScene() {
+            stopARCamera();
+            showScreen('chatScreen');
+        }
+
+        async function startARCamera() {
+            try {
+                arStream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: 'environment' },
+                    audio: false
+                });
+                const video = document.getElementById('arVideo');
+                video.srcObject = arStream;
+
+                document.getElementById('arPlaceholder').style.display = 'none';
+                document.getElementById('arOverlay').style.display = 'block';
+                document.getElementById('arCompanion').textContent = selectedAvatar.emoji;
+
+                createARParticles();
+                showToast('AR 模式已开启，伙伴就在你身边！');
+
+                if (window.DeviceOrientationEvent) {
+                    window.addEventListener('deviceorientation', handleOrientation);
+                }
+            } catch (err) {
+                showToast('无法访问摄像头，使用模拟模式');
+                document.getElementById('arPlaceholder').style.display = 'none';
+                document.getElementById('arOverlay').style.display = 'block';
+                document.getElementById('arCompanion').textContent = selectedAvatar.emoji;
+                createARParticles();
+            }
+        }
+
+        function stopARCamera() {
+            if (arStream) {
+                arStream.getTracks().forEach(track => track.stop());
+                arStream = null;
+            }
+            const video = document.getElementById('arVideo');
+            if (video.srcObject) {
+                video.srcObject = null;
+            }
+            document.getElementById('arPlaceholder').style.display = 'flex';
+            document.getElementById('arOverlay').style.display = 'none';
+            if (window.DeviceOrientationEvent) {
+                window.removeEventListener('deviceorientation', handleOrientation);
+            }
+        }
+
+        function handleOrientation(event) {
+            const gamma = event.gamma || 0;
+            const beta = event.beta || 0;
+            const companion = document.getElementById('arCompanion');
+            const glow = document.querySelector('.ar-companion-glow');
+            const xOffset = Math.max(-50, Math.min(50, gamma * 1.5));
+            const yOffset = Math.max(-30, Math.min(30, (beta - 45) * 1.5));
+            companion.style.left = `calc(50% + ${xOffset}px)`;
+            companion.style.top = `calc(45% + ${yOffset}px)`;
+            glow.style.left = `calc(50% + ${xOffset}px)`;
+            glow.style.top = `calc(45% + ${yOffset}px)`;
+        }
+
+        function createARParticles() {
+            const container = document.getElementById('arParticles');
+            container.innerHTML = '';
+            for (let i = 0; i < 20; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'ar-particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.bottom = Math.random() * 50 + 'px';
+                particle.style.animationDelay = Math.random() * 3 + 's';
+                particle.style.animationDuration = (2 + Math.random() * 2) + 's';
+                particle.style.width = (4 + Math.random() * 4) + 'px';
+                particle.style.height = particle.style.width;
+                container.appendChild(particle);
+            }
+        }
+
+        function arAction(action) {
+            const companion = document.getElementById('arCompanion');
+            const bubble = document.getElementById('arChatBubble');
+
+            switch (action) {
+                case 'wave':
+                    companion.style.transform = 'translate(-50%, -50%) scale(1.2)';
+                    setTimeout(() => { companion.style.transform = 'translate(-50%, -50%) scale(1)'; }, 300);
+                    bubble.textContent = '你好呀！👋 很高兴见到你！';
+                    break;
+                case 'chat':
+                    const greetings = [
+                        '今天想聊点什么呢？',
+                        '我在这儿陪着你呢～',
+                        '有什么心事可以告诉我哦！',
+                        '你今天过得怎么样？'
+                    ];
+                    bubble.textContent = greetings[Math.floor(Math.random() * greetings.length)];
+                    break;
+                case 'mood':
+                    bubble.textContent = '记住，不管什么心情\n我都会陪着你的！🌟';
+                    companion.style.filter = 'drop-shadow(0 0 50px rgba(236,72,153,0.8))';
+                    setTimeout(() => { companion.style.filter = 'drop-shadow(0 0 30px rgba(99,102,241,0.6))'; }, 1000);
+                    break;
+                case 'rotate':
+                    arRotation += 180;
+                    companion.style.transform = `translate(-50%, -50%) rotate(${arRotation}deg)`;
+                    setTimeout(() => {
+                        companion.style.transition = 'transform 0.5s ease';
+                        companion.style.transform = `translate(-50%, -50%) scale(1.1)`;
+                        setTimeout(() => { companion.style.transform = 'translate(-50%, -50%) scale(1)'; }, 300);
+                    }, 500);
+                    bubble.textContent = '转圈圈～好开心！🎡';
+                    break;
+            }
         }
 
         // ===== Init =====
